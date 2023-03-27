@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.8.10"
 }
 
-group = "com.severett"
+group = "com.severett.archunitdemo"
 version = "1.0-SNAPSHOT"
 
 repositories {
