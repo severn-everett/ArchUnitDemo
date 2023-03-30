@@ -11,6 +11,7 @@ class Account(
     @field:Id
     var id: Long = 0L,
     var balance: BigDecimal = BigDecimal.ZERO,
+    var type: AccountType,
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     var owner: Owner
