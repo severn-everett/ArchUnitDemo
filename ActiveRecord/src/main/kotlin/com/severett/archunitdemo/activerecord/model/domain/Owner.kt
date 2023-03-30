@@ -11,7 +11,7 @@ class Owner(
     var name: String,
     var surname: String,
     @OneToMany(mappedBy = "owner")
-    var accounts: Set<BankAccount> = emptySet(),
+    var accounts: Set<Account> = emptySet(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

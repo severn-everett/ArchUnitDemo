@@ -7,17 +7,17 @@ import jakarta.persistence.ManyToOne
 import java.math.BigDecimal
 
 @Entity
-class BankAccount(
+class Account(
     @field:Id
-    var id: Long,
-    var amount: BigDecimal,
+    var id: Long = 0L,
+    var balance: BigDecimal = BigDecimal.ZERO,
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     var owner: Owner
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is BankAccount) return false
+        if (other !is Account) return false
 
         return id == other.id
     }

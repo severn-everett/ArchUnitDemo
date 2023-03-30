@@ -1,5 +1,6 @@
 package com.severett.archunitdemo.activerecord.controller
 
+import com.severett.archunitdemo.activerecord.model.exception.IllegalOperationException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,5 +13,10 @@ class RestControllerAdvice : ResponseEntityExceptionHandler() {
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFoundException(): ResponseEntity<Unit> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+    }
+
+    @ExceptionHandler(IllegalOperationException::class)
+    fun handleIllegalOperationException(): ResponseEntity<Unit> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
     }
 }
