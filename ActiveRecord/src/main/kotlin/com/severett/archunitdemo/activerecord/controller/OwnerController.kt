@@ -1,7 +1,6 @@
 package com.severett.archunitdemo.activerecord.controller
 
 import com.severett.archunitdemo.activerecord.model.dto.CreateModifyOwnerDTO
-import com.severett.archunitdemo.activerecord.model.dto.OwnerDTO
 import com.severett.archunitdemo.activerecord.service.OwnerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -27,15 +26,7 @@ class OwnerController(private val ownerService: OwnerService) {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    fun getOwner(@PathVariable id: Long): OwnerDTO {
-        val owner = ownerService.getOwner(id)
-        return OwnerDTO(
-            id = owner.id,
-            name = owner.name,
-            surname = owner.surname,
-            accounts = owner.accounts.map { it.id }
-        )
-    }
+    fun getOwner(@PathVariable id: Long) = ownerService.getOwner(id)
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
