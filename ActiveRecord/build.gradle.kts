@@ -18,6 +18,7 @@ dependencies {
     //// Production Dependencies
     // Implementation
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     // Runtime
     runtimeOnly(kotlin("reflect"))
     runtimeOnly("com.h2database:h2:2.1.214")

@@ -28,6 +28,7 @@ class ArchTest {
             .beInterfaces()
             .andShould()
             .beAssignableTo(Repository::class.java)
+
         val onlyInRepoRule = classes()
             .that()
             .resideOutsideOfPackage(REPO_PACKAGE)

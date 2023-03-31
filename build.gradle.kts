@@ -26,7 +26,6 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-web")
         testImplementation(kotlin("test"))
         testImplementation("com.tngtech.archunit:archunit:1.0.1")
     }
