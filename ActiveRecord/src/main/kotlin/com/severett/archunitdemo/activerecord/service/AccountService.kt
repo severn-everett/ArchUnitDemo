@@ -26,7 +26,7 @@ class AccountService(private val accountRepo: AccountRepo, private val ownerRepo
             AccountDTO(account.id, account.balance, account.type, account.owner.id)
         } ?: throw EntityNotFoundException("No account found for id $id")
 
-    fun getByType(type: AccountType) = accountRepo.getByType(type).map { account ->
+    fun getByType(type: AccountType) = accountRepo.getAccounts(type).map { account ->
         AccountDTO(account.id, account.balance, account.type, account.owner.id)
     }
 

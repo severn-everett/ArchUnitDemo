@@ -1,6 +1,8 @@
 package com.severett.archunitdemo.activerecord.model.domain
 
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
@@ -11,9 +13,10 @@ class Account(
     @field:Id
     var id: Long = 0L,
     var balance: BigDecimal = BigDecimal.ZERO,
+    @field:Enumerated(EnumType.STRING)
     var type: AccountType,
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
+    @field:ManyToOne
+    @field:JoinColumn(name = "owner_id", nullable = false)
     var owner: Owner
 ) {
     override fun equals(other: Any?): Boolean {
