@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "1.8.10"
+    val kotlinVersion = "1.9.0"
     kotlin("plugin.allopen") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
 }
@@ -21,8 +21,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     // Runtime
     runtimeOnly(kotlin("reflect"))
-    runtimeOnly("com.h2database:h2:2.1.214")
+    runtimeOnly("com.h2database:h2:2.2.220")
     //// Testing Dependencies
-    // Implementation
-    testImplementation("com.tngtech.archunit:archunit:1.0.1")
 }
