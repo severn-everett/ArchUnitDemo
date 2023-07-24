@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.microutils:kotlin-logging:3.0.5")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("io.github.oshai:kotlin-logging:5.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
     implementation("org.springframework.boot:spring-boot-starter")
 }
