@@ -16,7 +16,7 @@ private val UNKNOWN_INITIAL_NUMS = listOf(9u, 9u, 9u, 9u)
 private const val UNKNOWN_LIMIT = 10
 
 @Component
-class GeneratorListenerAdapter : ListenerPort {
+internal class GeneratorListenerAdapter : ListenerPort {
     private val isRunning = AtomicBoolean(true)
     private val creditCardIssuers = CreditCardIssuer.entries
 

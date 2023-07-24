@@ -15,8 +15,7 @@ private const val REPO_PACKAGE = "com.severett.archunitdemo.activerecord.repo"
 private const val DOMAIN_PACKAGE = "com.severett.archunitdemo.activerecord.model.domain"
 private const val DTO_PACKAGE = "com.severett.archunitdemo.activerecord.model.dto"
 
-class ArchTest {
-
+class ActiveRecordArchTest {
     private val activeRecordClasses = ClassFileImporter().importPackages("com.severett.archunitdemo.activerecord")
 
     @Test
