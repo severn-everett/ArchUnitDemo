@@ -10,4 +10,5 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
     implementation("org.springframework.boot:spring-boot-starter")
     testImplementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
 }

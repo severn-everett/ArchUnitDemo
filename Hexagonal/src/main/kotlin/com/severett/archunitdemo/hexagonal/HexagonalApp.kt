@@ -1,14 +1,14 @@
 package com.severett.archunitdemo.hexagonal
 
-import com.severett.archunitdemo.hexagonal.service.AnalyzerService
+import com.severett.archunitdemo.hexagonal.usecase.ValidationUseCase
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-open class HexagonalApp(private val analyzerService: AnalyzerService) : CommandLineRunner {
+open class HexagonalApp(private val validationUseCase: ValidationUseCase) : CommandLineRunner {
     override fun run(vararg args: String) {
-        analyzerService.run()
+        validationUseCase.run()
     }
 }
 

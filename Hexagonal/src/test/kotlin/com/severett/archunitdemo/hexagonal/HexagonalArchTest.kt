@@ -7,17 +7,31 @@ import com.tngtech.archunit.lang.ArchCondition
 import com.tngtech.archunit.lang.ConditionEvents
 import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
 import kotlinx.metadata.Visibility
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.visibility
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.*
 import kotlin.test.Test
 
-private const val ADAPTER_PACKAGE = "com.severett.archunitdemo.hexagonal.adapter"
+private const val BASE_PACKAGE = "com.severett.archunitdemo.hexagonal"
+private const val ADAPTER_PACKAGE = "$BASE_PACKAGE.adapter"
+private const val PORT_PACKAGE = "$BASE_PACKAGE.port"
+private const val SERVICE_PACKAGE = "$BASE_PACKAGE.service"
+private const val USE_CASE_PACKAGE = "$BASE_PACKAGE.usecase"
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HexagonalArchTest {
-    private val hexagonalClasses = ClassFileImporter().importPackages("com.severett.archunitdemo.hexagonal")
+    private val hexagonalClasses = ClassFileImporter().importPackages(BASE_PACKAGE)
+    private val areNonSynthetic = object : DescribedPredicate<JavaClass>("is not a synthetic class") {
+        override fun test(klass: JavaClass) = klass.checkMetadata { it is KotlinClassMetadata.Class }
+    }
 
     @Test
     fun noImplementationLeakage() {
@@ -27,10 +41,6 @@ class HexagonalArchTest {
             .should()
             .dependOnClassesThat()
             .resideInAPackage(ADAPTER_PACKAGE)
-
-        val areNonSynthetic = object : DescribedPredicate<JavaClass>("is not a synthetic class") {
-            override fun test(klass: JavaClass) = klass.checkMetadata { it is KotlinClassMetadata.Class }
-        }
 
         val beInternal = object : ArchCondition<JavaClass>("use the internal keyword") {
             override fun check(klass: JavaClass, events: ConditionEvents) {
@@ -51,7 +61,7 @@ class HexagonalArchTest {
             .resideInAPackage(ADAPTER_PACKAGE)
             .and(areNonSynthetic)
             .and()
-            .areTopLevelClasses()
+            .areNotAnonymousClasses()
             .and()
             .arePublic()
             .should(beInternal)
@@ -62,9 +72,52 @@ class HexagonalArchTest {
         )
     }
 
-    private inline fun JavaClass.checkMetadata(
-        predicate: (KotlinClassMetadata) -> Boolean
-    ): Boolean {
+    @Test
+    fun useCaseConstructors() {
+        val thatResideInPortOrServicePackages = object : DescribedPredicate<List<JavaClass>>(
+            "must reside in the port or service package"
+        ) {
+            override fun test(args: List<JavaClass>) = args.all { klass ->
+                klass.`package`.name in listOf(PORT_PACKAGE, SERVICE_PACKAGE)
+            }
+        }
+
+        val constructorRule = constructors()
+            .that()
+            .areDeclaredInClassesThat()
+            .resideInAPackage(USE_CASE_PACKAGE)
+            .and()
+            .areDeclaredInClassesThat()
+            .areNotAnonymousClasses()
+            .should()
+            .haveRawParameterTypes(thatResideInPortOrServicePackages)
+
+        constructorRule.check(hexagonalClasses)
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    fun classNomenclature(packageName: String, requiredSuffix: String) {
+        val suffixRule = classes()
+            .that()
+            .resideInAPackage(packageName)
+            .and(areNonSynthetic)
+            .and()
+            .areNotAnonymousClasses()
+            .should()
+            .haveSimpleNameEndingWith(requiredSuffix)
+
+        suffixRule.check(hexagonalClasses)
+    }
+
+    private fun classNomenclature() = Stream.of(
+        Arguments.of(ADAPTER_PACKAGE, "Adapter"),
+        Arguments.of(PORT_PACKAGE, "Port"),
+    )
+
+    // This cannot be a local function because Kotlin does not support
+    // local inline functions as of version 1.9.0
+    private inline fun JavaClass.checkMetadata(predicate: (KotlinClassMetadata) -> Boolean): Boolean {
         return annotations
             .asSequence()
             .filter { it.rawType.isAssignableTo(Metadata::class.java) }

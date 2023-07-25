@@ -10,6 +10,6 @@ private val logger = KotlinLogging.logger { }
 @Service
 internal class MongoReporterAdapter : ReporterPort {
     override fun reportNumberResult(result: ValidationResult) {
-        logger.info { "Reporting instance of ${result.javaClass} for CC Number ${result.ccNumber}" }
+        logger.info { "Reporting instance of ${result.javaClass.simpleName} for CC Number ${result.ccNumber}" }
     }
 }

@@ -2,35 +2,24 @@ package com.severett.archunitdemo.hexagonal.service
 
 import com.severett.archunitdemo.hexagonal.domain.CreditCardIssuer
 import com.severett.archunitdemo.hexagonal.domain.ValidationResult
-import com.severett.archunitdemo.hexagonal.port.ListenerPort
-import com.severett.archunitdemo.hexagonal.port.ReporterPort
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.time.Instant
 
 private val logger = KotlinLogging.logger { }
 
 @Service
-class AnalyzerService(private val listenerPort: ListenerPort, private val reporterPort: ReporterPort) {
+class AnalyzerService {
     private val creditCardIssuers = CreditCardIssuer.entries
 
-    fun run() {
-        runBlocking {
-            listenerPort.listen().collect(::analyzeCreditCardNumber)
-        }
-    }
-
-    private fun analyzeCreditCardNumber(ccNumber: ULong) {
-        logger.info { "Received number: $ccNumber" }
+    fun analyzeCreditCardNumber(ccNumber: ULong): ValidationResult {
         val ccDigits = toDigitList(ccNumber)
         val issuer = getCreditCardIssuer(ccDigits)
-        val result = when {
+        return when {
             issuer == null -> ValidationResult.InvalidIssuerFailure(ccNumber, Instant.now())
             !isValidNumber(ccDigits) -> ValidationResult.InvalidNumberFailure(issuer.brand, ccNumber, Instant.now())
             else -> ValidationResult.Success(issuer.brand, ccNumber, Instant.now())
         }
-        reporterPort.reportNumberResult(result)
     }
 
     private fun toDigitList(ccNumber: ULong): List<UInt> {
@@ -61,7 +50,7 @@ class AnalyzerService(private val listenerPort: ListenerPort, private val report
                 sum + if (digit < 5u) digit * 2u else (2u * (5u - digit)) - 1u
             }
         }
-        logger.info { "Summed Number: $sum" }
+        logger.debug { "Summed Number: $sum" }
         return (sum % 10u) == 0u
     }
 }
