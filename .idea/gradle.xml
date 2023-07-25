@@ -10,7 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/ActiveRecord" />
-            <option value="$PROJECT_DIR$/EventDriven" />
+            <option value="$PROJECT_DIR$/EventSourcing" />
             <option value="$PROJECT_DIR$/Hexagonal" />
           </set>
         </option>

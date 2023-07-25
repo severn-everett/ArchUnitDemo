@@ -1,5 +1,5 @@
 
 rootProject.name = "ArchUnitDemo"
 include("Hexagonal")
-include("EventDriven")
+include("EventSourcing")
 include("ActiveRecord")
