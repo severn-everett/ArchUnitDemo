@@ -1,11 +1,8 @@
 plugins {
-    val kotlinVersion = "1.9.0"
-    kotlin("plugin.allopen") version kotlinVersion
-    kotlin("plugin.jpa") version kotlinVersion
+    kotlin("plugin.jpa") version "1.9.0"
 }
 
 apply(plugin = "kotlin-jpa")
-apply(plugin = "kotlin-spring")
 
 group = "com.severett.archunitdemo"
 version = "1.0-SNAPSHOT"

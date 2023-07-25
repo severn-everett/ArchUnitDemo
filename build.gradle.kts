@@ -1,5 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.9.0"
+    val kotlinVersion = "1.9.0"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.allopen") version kotlinVersion
     id("org.springframework.boot") version "3.1.2"
     id("io.spring.dependency-management") version "1.1.0"
 }
@@ -13,6 +15,7 @@ repositories {
 
 subprojects {
     apply(plugin = "io.spring.dependency-management")
+    apply(plugin = "kotlin-spring")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.springframework.boot")
     kotlin {

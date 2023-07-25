@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-open class HexagonalApp(private val validationUseCase: ValidationUseCase) : CommandLineRunner {
+class HexagonalApp(private val validationUseCase: ValidationUseCase) : CommandLineRunner {
     override fun run(vararg args: String) {
         validationUseCase.run()
     }
