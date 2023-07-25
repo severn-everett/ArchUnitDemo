@@ -6,12 +6,11 @@ repositories {
 }
 
 dependencies {
-    val coroutinesVersion: String by properties
     val metadataVersion: String by properties
     //// Production Dependencies
     // Implementation
     implementation("io.github.oshai:kotlin-logging:5.0.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.springframework.boot:spring-boot-starter")
     //// Test Dependencies
     // Implementation
