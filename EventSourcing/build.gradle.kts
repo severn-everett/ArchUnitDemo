@@ -22,4 +22,5 @@ dependencies {
     //// Test Dependencies
     // Implementation
     testImplementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:$metadataVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
 }

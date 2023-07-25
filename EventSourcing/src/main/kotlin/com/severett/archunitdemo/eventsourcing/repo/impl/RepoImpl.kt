@@ -1,8 +1,10 @@
-package com.severett.archunitdemo.eventsourcing.repo
+package com.severett.archunitdemo.eventsourcing.repo.impl
 
 import com.severett.archunitdemo.eventsourcing.domain.event.StockEvent
 import com.severett.archunitdemo.eventsourcing.domain.event.StockReceivedEvent
 import com.severett.archunitdemo.eventsourcing.domain.event.StockShippedEvent
+import com.severett.archunitdemo.eventsourcing.repo.ReadRepo
+import com.severett.archunitdemo.eventsourcing.repo.WriteRepo
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

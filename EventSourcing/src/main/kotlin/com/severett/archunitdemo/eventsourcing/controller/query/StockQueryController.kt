@@ -1,4 +1,4 @@
-package com.severett.archunitdemo.eventsourcing.controller
+package com.severett.archunitdemo.eventsourcing.controller.query
 
 import com.severett.archunitdemo.eventsourcing.service.query.StockAmountQuery
 import com.severett.archunitdemo.eventsourcing.service.query.StockAuditQuery

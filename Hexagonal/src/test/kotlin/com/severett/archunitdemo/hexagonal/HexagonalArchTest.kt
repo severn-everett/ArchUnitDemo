@@ -115,8 +115,8 @@ class HexagonalArchTest {
         Arguments.of(PORT_PACKAGE, "Port"),
     )
 
-    // This cannot be a local function because Kotlin does not support
-    // local inline functions as of version 1.9.0
+    // TODO This cannot be a local function because Kotlin does not support
+    //      local inline functions as of version 1.9.0
     private inline fun JavaClass.checkMetadata(predicate: (KotlinClassMetadata) -> Boolean): Boolean {
         return annotations
             .asSequence()

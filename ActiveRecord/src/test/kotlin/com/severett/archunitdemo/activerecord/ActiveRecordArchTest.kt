@@ -11,12 +11,13 @@ import org.springframework.data.repository.Repository
 import org.springframework.web.bind.annotation.RestController
 import kotlin.test.Test
 
-private const val REPO_PACKAGE = "com.severett.archunitdemo.activerecord.repo"
-private const val DOMAIN_PACKAGE = "com.severett.archunitdemo.activerecord.model.domain"
-private const val DTO_PACKAGE = "com.severett.archunitdemo.activerecord.model.dto"
+private const val BASE_PACKAGE = "com.severett.archunitdemo.activerecord"
+private const val REPO_PACKAGE = "$BASE_PACKAGE.repo"
+private const val DOMAIN_PACKAGE = "$BASE_PACKAGE.model.domain"
+private const val DTO_PACKAGE = "$BASE_PACKAGE.model.dto"
 
 class ActiveRecordArchTest {
-    private val activeRecordClasses = ClassFileImporter().importPackages("com.severett.archunitdemo.activerecord")
+    private val activeRecordClasses = ClassFileImporter().importPackages(BASE_PACKAGE)
 
     @Test
     fun repositoryInheritance() {

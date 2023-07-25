@@ -1,4 +1,4 @@
-package com.severett.archunitdemo.eventsourcing.controller
+package com.severett.archunitdemo.eventsourcing.controller.command
 
 import com.severett.archunitdemo.eventsourcing.service.command.SaveReceivedCommand
 import com.severett.archunitdemo.eventsourcing.service.command.SaveShippedCommand
