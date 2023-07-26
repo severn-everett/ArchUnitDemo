@@ -5,8 +5,6 @@ import com.severett.archunitdemo.eventsourcing.repo.ReadRepo
 import com.severett.archunitdemo.eventsourcing.repo.WriteRepo
 import com.tngtech.archunit.base.DescribedPredicate
 import com.tngtech.archunit.core.domain.JavaClass
-import com.tngtech.archunit.core.domain.JavaField
-import com.tngtech.archunit.core.domain.JavaMember
 import com.tngtech.archunit.core.domain.JavaModifier
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.lang.ArchCondition
@@ -14,12 +12,15 @@ import com.tngtech.archunit.lang.ConditionEvents
 import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields
 import kotlinx.serialization.KSerializer
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
@@ -32,6 +33,9 @@ private const val BASE_PACKAGE = "com.severett.archunitdemo.eventsourcing"
 private const val CONTROLLER_PACKAGE = "$BASE_PACKAGE.controller"
 private const val SERDE_PACKAGE = "$BASE_PACKAGE.serde"
 private const val SERVICE_PACKAGE = "$BASE_PACKAGE.service"
+
+private const val COMMAND = "command"
+private const val QUERY = "query"
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventSourcingArchTest {
@@ -72,14 +76,14 @@ class EventSourcingArchTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["command", "query"])
+    @ValueSource(strings = [COMMAND, QUERY])
     fun controllerConstructor(pkg: String) {
-        val classPkg = "$SERVICE_PACKAGE.$pkg"
+        val servicePkg = "$SERVICE_PACKAGE.$pkg"
         val thatResideInCorrectServicePackage = object : DescribedPredicate<List<JavaClass>>(
-            "must reside in package $classPkg"
+            "must reside in package $servicePkg"
         ) {
             override fun test(args: List<JavaClass>) = args.all { klass ->
-                klass.`package`.name == classPkg
+                klass.`package`.name == servicePkg
             }
         }
 
@@ -106,38 +110,29 @@ class EventSourcingArchTest {
         immutableDataRule.check(eventSourcingClasses)
     }
 
-    @Test
-    fun cqrsCompliance() {
-        val areOfReadRepo = object : DescribedPredicate<JavaMember>(
-            "are of class ${ReadRepo::class.simpleName}"
-        ) {
-            override fun test(member: JavaMember): Boolean {
-                return (member is JavaField) && member.rawType.isEquivalentTo(ReadRepo::class.java)
-            }
+    @ParameterizedTest
+    @MethodSource
+    fun cqrsCompliance(pkg: String, requiredRepoClass: Class<*>, prohibitedRepoClass: Class<*>) {
+        val servicePkg = "$SERVICE_PACKAGE.$pkg"
 
-        }
-
-        val containMembersOfWriteRepo = object : ArchCondition<JavaClass>(
-            "contain members of class ${WriteRepo::class.simpleName}"
-        ) {
-            override fun check(klass: JavaClass, events: ConditionEvents) {
-                events.add(
-                    SimpleConditionEvent(
-                        klass,
-                        klass.fields.any { field -> field.rawType.isEquivalentTo(WriteRepo::class.java) },
-                        "${klass.name} cannot have both ${ReadRepo::class.simpleName} " +
-                                "and ${WriteRepo::class.simpleName}"
-                    )
-                )
-            }
-        }
-
-        val complianceRule = noClasses()
+        val requiredRepoRule = fields()
             .that()
-            .containAnyMembersThat(areOfReadRepo)
-            .should(containMembersOfWriteRepo)
+            .haveRawType(requiredRepoClass)
+            .should()
+            .beDeclaredInClassesThat()
+            .resideInAPackage(servicePkg)
 
-        complianceRule.check(eventSourcingClasses)
+        val prohibitedRepoRule = noFields()
+            .that()
+            .haveRawType(prohibitedRepoClass)
+            .should()
+            .beDeclaredInClassesThat()
+            .resideInAPackage(servicePkg)
+
+        assertAll(
+            { requiredRepoRule.check(eventSourcingClasses) },
+            { prohibitedRepoRule.check(eventSourcingClasses) },
+        )
     }
 
     @Test
@@ -177,4 +172,9 @@ class EventSourcingArchTest {
             { suspendKeywordCheck.check(eventSourcingClasses) }
         )
     }
+
+    private fun cqrsCompliance() = Stream.of(
+        Arguments.of(COMMAND, WriteRepo::class.java, ReadRepo::class.java),
+        Arguments.of(QUERY, ReadRepo::class.java, WriteRepo::class.java)
+    )
 }
