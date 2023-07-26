@@ -20,4 +20,6 @@ dependencies {
     runtimeOnly(kotlin("reflect"))
     runtimeOnly("com.h2database:h2:2.2.220")
     //// Testing Dependencies
+    // Implementation
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.0.1")
 }

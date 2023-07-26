@@ -2,15 +2,18 @@ package com.severett.archunitdemo.activerecord
 
 import com.tngtech.archunit.base.DescribedPredicate
 import com.tngtech.archunit.core.domain.JavaClass
-import com.tngtech.archunit.core.importer.ClassFileImporter
+import com.tngtech.archunit.core.domain.JavaClasses
+import com.tngtech.archunit.junit.AnalyzeClasses
+import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
+import com.tngtech.archunit.lang.syntax.elements.ClassesShouldConjunction
+import com.tngtech.archunit.library.Architectures
 import com.tngtech.archunit.library.Architectures.layeredArchitecture
 import jakarta.persistence.Entity
 import org.junit.jupiter.api.assertAll
 import org.springframework.data.repository.Repository
 import org.springframework.web.bind.annotation.RestController
-import kotlin.test.Test
 
 private const val BASE_PACKAGE = "com.severett.archunitdemo.activerecord"
 private const val CONTROLLER_PACKAGE = "$BASE_PACKAGE.controller"
@@ -23,46 +26,36 @@ private const val CONTROLLER_LAYER = "Controller"
 private const val REPO_LAYER = "Repo"
 private const val SERVICE_LAYER = "Service"
 
+@AnalyzeClasses(packagesOf = [ActiveRecordApp::class])
 class ActiveRecordArchTest {
-    private val activeRecordClasses = ClassFileImporter().importPackages(BASE_PACKAGE)
+    @ArchTest
+    val correctLayering: Architectures.LayeredArchitecture = layeredArchitecture()
+        .consideringAllDependencies()
+        .layer(CONTROLLER_LAYER).definedBy(CONTROLLER_PACKAGE)
+        .layer(SERVICE_LAYER).definedBy(SERVICE_PACKAGE)
+        .layer(REPO_LAYER).definedBy(REPO_PACKAGE)
+        .whereLayer(CONTROLLER_LAYER).mayNotBeAccessedByAnyLayer()
+        .whereLayer(SERVICE_LAYER).mayOnlyBeAccessedByLayers(CONTROLLER_LAYER)
+        .whereLayer(REPO_LAYER).mayOnlyBeAccessedByLayers(SERVICE_LAYER)
 
-    @Test
-    fun correctLayering() {
-        val layeringRule = layeredArchitecture()
-            .consideringAllDependencies()
-            .layer(CONTROLLER_LAYER).definedBy(CONTROLLER_PACKAGE)
-            .layer(SERVICE_LAYER).definedBy(SERVICE_PACKAGE)
-            .layer(REPO_LAYER).definedBy(REPO_PACKAGE)
-            .whereLayer(CONTROLLER_LAYER).mayNotBeAccessedByAnyLayer()
-            .whereLayer(SERVICE_LAYER).mayOnlyBeAccessedByLayers(CONTROLLER_LAYER)
-            .whereLayer(REPO_LAYER).mayOnlyBeAccessedByLayers(SERVICE_LAYER)
-        layeringRule.check(activeRecordClasses)
-    }
+    @ArchTest
+    val repositoryInheritance: ClassesShouldConjunction = classes()
+        .that()
+        .resideInAPackage(REPO_PACKAGE)
+        .should()
+        .beInterfaces()
+        .andShould()
+        .beAssignableTo(Repository::class.java)
 
-    @Test
-    fun repositoryInheritance() {
-        val repoInheritanceRule = classes()
-            .that()
-            .resideInAPackage(REPO_PACKAGE)
-            .should()
-            .beInterfaces()
-            .andShould()
-            .beAssignableTo(Repository::class.java)
+    @ArchTest
+    val onlyImplementRepoInRepoPackage: ClassesShouldConjunction = classes()
+        .that()
+        .resideOutsideOfPackage(REPO_PACKAGE)
+        .should()
+        .notBeAssignableTo(Repository::class.java)
 
-        val onlyInRepoRule = classes()
-            .that()
-            .resideOutsideOfPackage(REPO_PACKAGE)
-            .should()
-            .notBeAssignableTo(Repository::class.java)
-
-        assertAll(
-            { repoInheritanceRule.check(activeRecordClasses) },
-            { onlyInRepoRule.check(activeRecordClasses) },
-        )
-    }
-
-    @Test
-    fun noDomainLeakage() {
+    @ArchTest
+    fun noDomainLeakage(importedClasses: JavaClasses) {
         val dtoPredicate = object : DescribedPredicate<JavaClass>("be either a standard collection or a DTO") {
             override fun test(t: JavaClass): Boolean {
                 return when {
@@ -98,9 +91,9 @@ class ActiveRecordArchTest {
             .haveRawReturnType(dtoPredicate)
 
         assertAll(
-            { dtoAnnotationRule.check(activeRecordClasses) },
-            { domainAnnotationRule.check(activeRecordClasses) },
-            { returnTypeRule.check(activeRecordClasses) },
+            { dtoAnnotationRule.check(importedClasses) },
+            { domainAnnotationRule.check(importedClasses) },
+            { returnTypeRule.check(importedClasses) },
         )
     }
 }
