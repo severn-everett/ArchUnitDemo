@@ -15,6 +15,8 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields
+import com.tngtech.archunit.library.metrics.ArchitectureMetrics
+import com.tngtech.archunit.library.metrics.MetricsComponents
 import kotlinx.serialization.KSerializer
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertAll
@@ -40,6 +42,9 @@ private const val QUERY = "query"
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventSourcingArchTest {
     private val eventSourcingClasses = ClassFileImporter().importPackages(BASE_PACKAGE)
+    private val metricsComponents = MetricsComponents.fromPackages(
+        eventSourcingClasses.getPackage(BASE_PACKAGE).subpackages
+    )
 
     @Test
     fun serializerStyle() {
@@ -186,6 +191,33 @@ class EventSourcingArchTest {
             { returnSignatureCheck.check(eventSourcingClasses) },
             { suspendKeywordCheck.check(eventSourcingClasses) }
         )
+    }
+
+    @Test
+    fun lakosMetrics() {
+        val lakosMetrics = ArchitectureMetrics.lakosMetrics(metricsComponents)
+        println("CCD: ${lakosMetrics.cumulativeComponentDependency}")
+        println("ACD: ${lakosMetrics.averageComponentDependency}")
+        println("RACD: ${lakosMetrics.relativeAverageComponentDependency}")
+        println("NCCD: ${lakosMetrics.normalizedCumulativeComponentDependency}")
+    }
+
+    @Test
+    fun componentDependencyMetrics() {
+        val componentDependencyMetrics = ArchitectureMetrics.componentDependencyMetrics(metricsComponents)
+        println("Ce: ${componentDependencyMetrics.getEfferentCoupling(SERVICE_PACKAGE)}")
+        println("Ca: ${componentDependencyMetrics.getAfferentCoupling(SERVICE_PACKAGE)}")
+        println("I: ${componentDependencyMetrics.getInstability(SERVICE_PACKAGE)}")
+        println("A: ${componentDependencyMetrics.getAbstractness(SERVICE_PACKAGE)}")
+        println("D: ${componentDependencyMetrics.getNormalizedDistanceFromMainSequence(SERVICE_PACKAGE)}")
+    }
+
+    @Test
+    fun visibilityMetrics() {
+        val visibilityMetrics = ArchitectureMetrics.visibilityMetrics(metricsComponents)
+        println("RV: ${visibilityMetrics.getRelativeVisibility(SERVICE_PACKAGE)}")
+        println("ARV: ${visibilityMetrics.averageRelativeVisibility}")
+        println("GRV: ${visibilityMetrics.globalRelativeVisibility}")
     }
 
     private fun cqrsCompliance() = Stream.of(

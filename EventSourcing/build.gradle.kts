@@ -10,7 +10,6 @@ repositories {
 }
 
 dependencies {
-    val metadataVersion: String by properties
     //// Production Dependencies
     // Implementation
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
@@ -21,6 +20,5 @@ dependencies {
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     //// Test Dependencies
     // Implementation
-    testImplementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:$metadataVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
 }
