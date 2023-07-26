@@ -107,7 +107,22 @@ class EventSourcingArchTest {
             .andShould()
             .haveModifier(JavaModifier.FINAL)
 
-        immutableDataRule.check(eventSourcingClasses)
+        val thatImplementStockEvent = object : DescribedPredicate<List<JavaClass>>("that implement StockEvent") {
+            override fun test(classes: List<JavaClass>) = classes.all { klass ->
+                klass.isEquivalentTo(Continuation::class.java) || klass.isAssignableFrom(StockEvent::class.java)
+            }
+        }
+        val writeRepoUsageRule = methods()
+            .that()
+            .areDeclaredInClassesThat()
+            .haveSimpleName("WriteRepo")
+            .should()
+            .haveRawParameterTypes(thatImplementStockEvent)
+
+        assertAll(
+            { immutableDataRule.check(eventSourcingClasses) },
+            { writeRepoUsageRule.check(eventSourcingClasses) },
+        )
     }
 
     @ParameterizedTest

@@ -8,6 +8,6 @@ import java.time.Instant
 @Service
 class SaveReceivedCommand(private val writeRepo: WriteRepo) {
     suspend fun execute(sku: String, quantity: UInt) {
-        writeRepo.saveEvent(sku, StockReceivedEvent(quantity, Instant.now()))
+        writeRepo.saveEvent(StockReceivedEvent(sku, quantity, Instant.now()))
     }
 }
