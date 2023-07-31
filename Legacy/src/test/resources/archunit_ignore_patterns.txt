@@ -1,0 +1,2 @@
+# .*com\.severett\.archunitdemo\.legacy\.controller\.OwnerDBAccess.*
+# .*com\.severett\.archunitdemo\.legacy\.controller\.AccountDBAccess.*
