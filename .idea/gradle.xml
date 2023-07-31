@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/ActiveRecord" />
             <option value="$PROJECT_DIR$/EventSourcing" />
             <option value="$PROJECT_DIR$/Hexagonal" />
+            <option value="$PROJECT_DIR$/Legacy" />
           </set>
         </option>
       </GradleProjectSettings>

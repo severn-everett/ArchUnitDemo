@@ -4,7 +4,7 @@ plugins {
 
 apply(plugin = "kotlin-jpa")
 
-group = "com.severett.archunitdemo"
+group = "com.severett.springmango"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -22,5 +22,4 @@ dependencies {
     runtimeOnly("com.h2database:h2:$h2Version")
     //// Testing Dependencies
     // Implementation
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.0.1")
 }
