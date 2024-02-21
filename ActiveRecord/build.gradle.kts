@@ -1,5 +1,5 @@
 plugins {
-    kotlin("plugin.jpa") version "1.9.0"
+    kotlin("plugin.jpa") version "1.9.22"
 }
 
 apply(plugin = "kotlin-jpa")
@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    val archUnitVersion: String by properties
     val h2Version: String by properties
     //// Production Dependencies
     // Implementation
@@ -22,5 +23,5 @@ dependencies {
     runtimeOnly("com.h2database:h2:$h2Version")
     //// Testing Dependencies
     // Implementation
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.0.1")
+    testImplementation("com.tngtech.archunit:archunit-junit5:$archUnitVersion")
 }

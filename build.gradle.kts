@@ -29,7 +29,8 @@ subprojects {
     }
 
     dependencies {
+        val archUnitVersion: String by properties
         testImplementation(kotlin("test"))
-        testImplementation("com.tngtech.archunit:archunit:1.2.0")
+        testImplementation("com.tngtech.archunit:archunit:$archUnitVersion")
     }
 }

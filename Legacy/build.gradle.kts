@@ -1,5 +1,5 @@
 plugins {
-    kotlin("plugin.jpa") version "1.9.0"
+    kotlin("plugin.jpa") version "1.9.22"
 }
 
 apply(plugin = "kotlin-jpa")
