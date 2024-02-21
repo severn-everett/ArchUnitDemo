@@ -1,9 +1,9 @@
 plugins {
-    val kotlinVersion = "1.9.0"
+    val kotlinVersion = "1.9.22"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
-    id("org.springframework.boot") version "3.1.2"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.2.2"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
 group = "com.severett.archunitdemo"
@@ -19,7 +19,7 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.springframework.boot")
     kotlin {
-        jvmToolchain(19)
+        jvmToolchain(21)
     }
 
     tasks {
@@ -30,6 +30,6 @@ subprojects {
 
     dependencies {
         testImplementation(kotlin("test"))
-        testImplementation("com.tngtech.archunit:archunit:1.0.1")
+        testImplementation("com.tngtech.archunit:archunit:1.2.0")
     }
 }
