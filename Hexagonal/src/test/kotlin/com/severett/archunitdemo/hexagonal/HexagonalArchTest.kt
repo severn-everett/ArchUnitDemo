@@ -123,7 +123,7 @@ class HexagonalArchTest {
             .filter { it.rawType.isAssignableTo(Metadata::class.java) }
             .any { annotation ->
                 val metadataAnnotation = annotation.`as`(Metadata::class.java)
-                val metadata = KotlinClassMetadata.read(metadataAnnotation)
+                val metadata = KotlinClassMetadata.readStrict(metadataAnnotation)
                 predicate.invoke(metadata)
             }
     }
