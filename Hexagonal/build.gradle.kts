@@ -8,7 +8,7 @@ repositories {
 dependencies {
     //// Production Dependencies
     // Implementation
-    implementation("io.github.oshai:kotlin-logging:6.0.3")
+    implementation("io.github.oshai:kotlin-logging:6.0.9")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.springframework.boot:spring-boot-starter")
     //// Test Dependencies
