@@ -13,6 +13,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     //// Test Dependencies
     // Implementation
-    testImplementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0")
+    testImplementation(kotlin("metadata-jvm"))
     testImplementation("org.junit.jupiter:junit-jupiter-params")
 }

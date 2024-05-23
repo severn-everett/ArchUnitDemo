@@ -9,15 +9,15 @@ import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
-import kotlinx.metadata.Visibility
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.visibility
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.*
+import kotlin.metadata.Visibility
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.visibility
 import kotlin.test.Test
 
 private const val BASE_PACKAGE = "com.severett.archunitdemo.hexagonal"
@@ -116,7 +116,7 @@ class HexagonalArchTest {
     )
 
     // TODO This cannot be a local function because Kotlin does not support
-    //      local inline functions as of version 1.9.0
+    //      local inline functions as of version 2.0.0
     private inline fun JavaClass.checkMetadata(predicate: (KotlinClassMetadata) -> Boolean): Boolean {
         return annotations
             .asSequence()
