@@ -30,7 +30,7 @@ private const val USE_CASE_PACKAGE = "$BASE_PACKAGE.usecase"
 class HexagonalArchTest {
     private val hexagonalClasses = ClassFileImporter().importPackages(BASE_PACKAGE)
     private val areNonSynthetic = object : DescribedPredicate<JavaClass>("is not a synthetic class") {
-        override fun test(klass: JavaClass) = klass.checkMetadata { it is KotlinClassMetadata.Class }
+        override fun test(klass: JavaClass) = klass.checkMetadata<KotlinClassMetadata.Class>()
     }
 
     @Test
@@ -47,9 +47,7 @@ class HexagonalArchTest {
                 events.add(
                     SimpleConditionEvent(
                         klass,
-                        klass.checkMetadata {
-                            (it as KotlinClassMetadata.Class).kmClass.visibility == Visibility.INTERNAL
-                        },
+                        klass.checkMetadata<KotlinClassMetadata.Class> { it.kmClass.visibility == Visibility.INTERNAL },
                         "${klass.name} must use the internal keyword"
                     )
                 )
@@ -115,16 +113,14 @@ class HexagonalArchTest {
         Arguments.of(PORT_PACKAGE, "Port"),
     )
 
-    // TODO This cannot be a local function because Kotlin does not support
-    //      local inline functions as of version 2.0.0
-    private inline fun JavaClass.checkMetadata(predicate: (KotlinClassMetadata) -> Boolean): Boolean {
+    private inline fun <reified T> JavaClass.checkMetadata(predicate: (T) -> Boolean = { true }): Boolean {
         return annotations
             .asSequence()
             .filter { it.rawType.isAssignableTo(Metadata::class.java) }
             .any { annotation ->
                 val metadataAnnotation = annotation.`as`(Metadata::class.java)
                 val metadata = KotlinClassMetadata.readStrict(metadataAnnotation)
-                predicate.invoke(metadata)
+                (metadata as? T)?.let { predicate.invoke(it) } ?: false
             }
     }
 }
