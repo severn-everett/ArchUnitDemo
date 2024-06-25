@@ -13,7 +13,7 @@ dependencies {
     //// Production Dependencies
     // Implementation
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     // Runtime
     runtimeOnly(kotlin("reflect"))
